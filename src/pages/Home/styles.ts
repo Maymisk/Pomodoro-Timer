@@ -58,6 +58,15 @@ const BaseInput = styled.input`
 
 export const TaskInput = styled(BaseInput)`
 	flex: 1;
+
+	// for the input suggestions
+	:-webkit-autofill,
+	:-webkit-autofill:hover,
+	:-webkit-autofill:focus,
+	:-webkit-autofill:active {
+		transition: background-color 5000s ease-in-out 0s;
+		-webkit-text-fill-color: ${props => props.theme['gray-100']} !important;
+	}
 `;
 
 export const MinutesAmountInput = styled(BaseInput)`
