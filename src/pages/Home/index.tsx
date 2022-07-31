@@ -1,8 +1,13 @@
-import { CodesandboxLogo, Play } from 'phosphor-react';
+import { CodesandboxLogo, HandPalm, Play } from 'phosphor-react';
 import {
-	Colon, CountdownContainer,
-	FormContainer, HomeContainer, MinutesAmountInput, StartTimerButton,
-	TaskInput
+	Colon,
+	CountdownContainer,
+	FormContainer,
+	HomeContainer,
+	InterruptTimerButton,
+	MinutesAmountInput,
+	StartTimerButton,
+	TaskInput,
 } from './styles';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,6 +31,8 @@ interface ICycle {
 	task: string;
 	minutesAmount: number;
 	startDate: Date;
+	interruptionDate?: Date;
+	completionDate?: Date;
 }
 
 export function Home() {
@@ -48,32 +55,70 @@ export function Home() {
 
 	useEffect(() => {
 		let interval: number;
-		
+
 		if (activeCycle) {
 			interval = setInterval(() => {
-				setAmountOfSecondsPassed(differenceInSeconds(new Date(), activeCycle.startDate))
-			}, 1000)
+				const timeDifference = differenceInSeconds(
+					new Date(),
+					activeCycle.startDate
+				);
+
+				if (timeDifference >= totalSeconds) {
+					setCycles(prevState => {
+						return prevState.map(cycle => {
+							if (cycle.id === activeCycleId) {
+								return {
+									...cycle,
+									completionDate: new Date(),
+								};
+							}
+
+							return cycle;
+						});
+					});
+
+					setActiveCycleId(null);
+				}
+
+				setAmountOfSecondsPassed(timeDifference);
+			}, 1000);
 		}
 
 		return () => {
-			clearInterval(interval)
-		}
-	}, [activeCycle])
-
+			setAmountOfSecondsPassed(0);
+			clearInterval(interval);
+		};
+	}, [activeCycle]);
 
 	function handleFormSubmission({ task, minutesAmount }: NewCycleFormData) {
 		const newCycle: ICycle = {
 			id: String(new Date().getTime()),
 			task,
 			minutesAmount,
-			startDate: new Date()
+			startDate: new Date(),
 		};
 
 		setCycles(prevState => [...prevState, newCycle]);
 		setActiveCycleId(newCycle.id);
-		setAmountOfSecondsPassed(0)
 
 		reset();
+	}
+
+	function handleCycleInterruption() {
+		setCycles(prevState => {
+			return prevState.map(cycle => {
+				if (cycle.id === activeCycleId) {
+					return {
+						...cycle,
+						interruptionDate: new Date(),
+					};
+				}
+
+				return cycle;
+			});
+		});
+
+		setActiveCycleId(null);
 	}
 
 	const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0;
@@ -86,9 +131,11 @@ export function Home() {
 
 	useEffect(() => {
 		if (activeCycle) {
-			document.title = `${minutes}:${seconds}`
+			document.title = `${minutes}:${seconds}`;
+		} else {
+			document.title = 'Pomodoro Timer';
 		}
-	}, [minutes, seconds, activeCycle])
+	}, [minutes, seconds, activeCycle]);
 
 	return (
 		<HomeContainer>
@@ -99,6 +146,7 @@ export function Home() {
 						type="text"
 						id="task"
 						placeholder="Dê um nome para o seu projeto"
+						disabled={!!activeCycle}
 						{...register('task')}
 					/>
 
@@ -109,6 +157,7 @@ export function Home() {
 						placeholder="00"
 						min={5}
 						step={5}
+						disabled={!!activeCycle}
 						{...register('minutesAmount', {
 							valueAsNumber: true,
 						})}
@@ -125,10 +174,23 @@ export function Home() {
 					<span>{seconds[1]}</span>
 				</CountdownContainer>
 
-				<StartTimerButton disabled={!formCanBeSubmitted} type="submit">
-					<Play size={24} />
-					Começar
-				</StartTimerButton>
+				{activeCycle ? (
+					<InterruptTimerButton
+						type="button"
+						onClick={handleCycleInterruption}
+					>
+						<HandPalm size={24} />
+						Interromper
+					</InterruptTimerButton>
+				) : (
+					<StartTimerButton
+						disabled={!formCanBeSubmitted}
+						type="submit"
+					>
+						<Play size={24} />
+						Começar
+					</StartTimerButton>
+				)}
 			</form>
 		</HomeContainer>
 	);

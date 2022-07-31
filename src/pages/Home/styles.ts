@@ -105,7 +105,7 @@ export const Colon = styled.div`
 	text-align: center;
 `;
 
-export const StartTimerButton = styled.button`
+export const BaseTimerButton = styled.button`
 	width: 100%;
 
 	border: 0;
@@ -120,7 +120,6 @@ export const StartTimerButton = styled.button`
 
 	padding: 1rem;
 
-	background: ${props => props.theme['green-500']};
 	color: ${props => props.theme['gray-100']};
 
 	transition: background-color 0.3s;
@@ -130,8 +129,20 @@ export const StartTimerButton = styled.button`
 
 		cursor: not-allowed;
 	}
+`;
+
+export const StartTimerButton = styled(BaseTimerButton)`
+	background: ${props => props.theme['green-500']};
 
 	&:not(:disabled):hover {
 		background: ${props => props.theme['green-700']};
+	}
+`;
+
+export const InterruptTimerButton = styled(BaseTimerButton)`
+	background: ${props => props.theme['red-500']};
+
+	&:not(:disabled):hover {
+		background: ${props => props.theme['red-700']};
 	}
 `;
