@@ -1,4 +1,16 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import {
+	createContext,
+	ReactNode,
+	useContext,
+	useEffect,
+	useReducer,
+} from 'react';
+import {
+	createNewCycleAction,
+	finishCycleAction,
+	interruptCycleAction,
+} from '../reducers/cycles/actions';
+import { cyclesReducer } from '../reducers/cycles/reducer';
 
 interface ICyclesContextData {
 	activeCycle: ICycle | undefined;
@@ -12,7 +24,7 @@ interface ICyclesProviderProps {
 	children: ReactNode;
 }
 
-interface ICycle {
+export interface ICycle {
 	id: string;
 	task: string;
 	minutesAmount: number;
@@ -26,8 +38,35 @@ type CreateCycleProps = Pick<ICycle, 'task' | 'minutesAmount'>;
 const CyclesContext = createContext({} as ICyclesContextData);
 
 export function CyclesContextProvider({ children }: ICyclesProviderProps) {
-	const [cycles, setCycles] = useState<ICycle[]>([]);
-	const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
+	const [cyclesState, dispatch] = useReducer(
+		cyclesReducer,
+		{
+			cycles: [],
+			activeCycleId: null,
+		},
+		() => {
+			const cyclesState = localStorage.getItem(
+				'@PomodoroTimer:cyclesState'
+			);
+
+			if (cyclesState) {
+				return JSON.parse(cyclesState);
+			}
+
+			return {
+				cycles: [],
+				activeCycleId: null,
+			};
+		}
+	);
+
+	useEffect(() => {
+		const stringifiedState = JSON.stringify(cyclesState);
+
+		localStorage.setItem('@PomodoroTimer:cyclesState', stringifiedState);
+	}, [cyclesState]);
+
+	const { activeCycleId, cycles } = cyclesState;
 
 	const activeCycle = cycles.find(cycle => cycle.id === activeCycleId);
 
@@ -39,42 +78,15 @@ export function CyclesContextProvider({ children }: ICyclesProviderProps) {
 			startDate: new Date(),
 		};
 
-		setCycles(prevState => [...prevState, newCycle]);
-		setActiveCycleId(newCycle.id);
+		dispatch(createNewCycleAction(newCycle));
 	}
 
 	function interruptActiveCycle() {
-		setCycles(prevState => {
-			return prevState.map(cycle => {
-				if (cycle.id === activeCycleId) {
-					return {
-						...cycle,
-						interruptionDate: new Date(),
-					};
-				}
-
-				return cycle;
-			});
-		});
-
-		setActiveCycleId(null);
+		dispatch(interruptCycleAction());
 	}
 
 	function finishActiveCycle() {
-		setCycles(prevState => {
-			return prevState.map(cycle => {
-				if (cycle.id === activeCycleId) {
-					return {
-						...cycle,
-						completionDate: new Date(),
-					};
-				}
-
-				return cycle;
-			});
-		});
-
-		setActiveCycleId(null);
+		dispatch(finishCycleAction());
 	}
 
 	return (

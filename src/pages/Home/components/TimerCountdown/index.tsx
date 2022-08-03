@@ -4,11 +4,21 @@ import { useCycles } from '../../../../contexts/CyclesContext';
 import { Colon, CountdownContainer } from './styles';
 
 export function TimerCountdown() {
-	const [amountOfSecondsPassed, setAmountOfSecondsPassed] = useState(0);
-
 	const { activeCycle, finishActiveCycle } = useCycles();
 
+	const [amountOfSecondsPassed, setAmountOfSecondsPassed] = useState(() => {
+		if (activeCycle) {
+			return differenceInSeconds(
+				new Date(),
+				new Date(activeCycle.startDate)
+			);
+		}
+
+		return 0;
+	});
+
 	const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0;
+
 	const currentSeconds = activeCycle
 		? totalSeconds - amountOfSecondsPassed
 		: 0;
@@ -24,7 +34,7 @@ export function TimerCountdown() {
 			interval = setInterval(() => {
 				const timeDifference = differenceInSeconds(
 					new Date(),
-					activeCycle.startDate
+					new Date(activeCycle.startDate)
 				);
 
 				if (timeDifference >= totalSeconds) {
@@ -36,7 +46,6 @@ export function TimerCountdown() {
 		}
 
 		return () => {
-			setAmountOfSecondsPassed(0);
 			clearInterval(interval);
 		};
 	}, [activeCycle, finishActiveCycle]);
