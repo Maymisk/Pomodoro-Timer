@@ -1,64 +1,39 @@
+<div align='center'>
+  <img width="400px" src="https://i.pinimg.com/originals/4a/65/ab/4a65abeead3a8d113bccfee5d5d239f4.gif" />
+</div>
 
-# Pomodoro Timer ⌚
+# ⏱️ Pomodoro Timer
 
-This project allows users to create and manage their tasks with associated Pomodoro timers. 
-## My journey 🏃‍♂️
+A modern Pomodoro Timer application built with React and TypeScript.  
 
-Developed during a bootcamp, this project served me as a practical introduction to **React's useReducer hook** and explores design patterns for state management. At the same time, it enhanced my fluency in CSS-in-JS and the react ecosystem as a whole.
-## Technologies ✨
+## 🚀 Live Demo
 
-- React ⚛
-- Typescript 🔹
-- Vite ⚡
-- Styled Components 💅
-- React Router DOM 🗺
-- React Hook Form 📃
-- Zod ✅
-- date-fns 📅
+Experience the application in action: [Live Demo](https://pomodoro-timer-xi-wine.vercel.app)
 
+## 🛠️ Features
 
-## Running locally 💻
+- **Work sessions management:** Create timers for each of your work sessions, for as long as you want
+- **Timer History:** See a brief history of your past work sessions and their statuses, stored in the browser's local storage.
 
-First, clone the project and change directories:
+## 📚 Technologies Used
 
-```bash
-git clone git@github.com:Maymisk/Pomodoro-Timer.git
-cd Pomodoro-Timer
-```
+| Technology           | Purpose                                  |
+|----------------------|------------------------------------------|
+| React                | UI Library                               |
+| TypeScript           | Static Typing                            |
+| Vite                 | Build Tool                               |
+| Styled Components    | CSS-in-JS Styling                        |
+| React Router DOM     | Client-Side Routing                      |
+| React Hook Form      | Form Management                          |
+| Zod                  | Schema Validation                        |
+| date-fns             | Date Utility Functions                   |
 
-Once inside the directory, install the dependencies:
+## 🧠 Learning Outcomes
 
-```bash
-yarn
-```
-or
+This project was developed as part of a bootcamp to deepen understanding of:
 
-```bash
-npm install
-```
-
-Then, simply run the "dev" script and [access the 5173 localhost port!](http://localhost:5173)
-
-```bash
-yarn dev
-```
-
-or
-```bash
-npm run dev
-```
-## Features 💪 
-
-- Create projects and associate Pomodoro Timers to effectively manage work sessions.
-
-- Start, pause, and reset the timer to tailor the work intervals.
-
-- Projects information is stored in the browser's local storage for persistence across sessions.
-
-- Access a list of all the projects created for quick reference.
-## Screenshots 📷
-
-![App Screenshot](.github/assets/screenshot1.png)
-
-![App Screenshot](.github/assets/screenshot2.png)
+- React patterns, including `useReducer` for complex state management.
+- Integration of form libraries with schema validation tools.
+- Modular and scalable CSS-in-JS styling approaches.
+- Efficient project bundling and hot module replacement with Vite.
 
